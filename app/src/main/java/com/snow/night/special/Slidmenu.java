@@ -114,7 +114,7 @@ public class Slidmenu extends FrameLayout {
             //根据mainview移动的距离 实现伴随动画
             float fraction = mainView.getLeft()*1f/dragrange;
             //根据滑动的百分比的值 执行伴随动画
-              executeAnimation(fraction);
+            executeAnimation(fraction);
 
             //执行状态更改的逻辑，和监听器方法的回调
             if(mainView.getLeft()==dragrange&& mSlidState != SlidState.Open){
@@ -149,7 +149,7 @@ public class Slidmenu extends FrameLayout {
 
     };
 
-    private void close() {
+    public void close() {
         viewDragHelper.smoothSlideViewTo(mainView,0,mainView.getTop());
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -161,16 +161,17 @@ public class Slidmenu extends FrameLayout {
 //        当mainview打开的时候 fraction 是 0-1的
 //        当mainview关闭的时候 fraction 是1-0的
 //        动画比例值的计算方法 scale =  start +(end - start)*fraction
-        animat1(fraction);
+
         ViewCompat.setScaleX(mainView, floatevaluator.evaluate(fraction,1.0f,0.7f));
         ViewCompat.setScaleY(mainView, floatevaluator.evaluate(fraction,1.0f,0.7f));
 //
         ViewCompat.setScaleX(menuView, floatevaluator.evaluate(fraction,0.3f,1f));
         ViewCompat.setScaleY(menuView, floatevaluator.evaluate(fraction,0.3f,1f));
         float roat = 0 +(360)*fraction;
-        ViewCompat.setRotationX(mainView,roat);
+        ViewCompat.setRotationY(mainView,roat);
         ViewCompat.setTranslationX(menuView,floatevaluator.evaluate(fraction,-menuWidth/2,0));
         ViewCompat.setAlpha(menuView,floatevaluator.evaluate(fraction,0.3f,1f));
+        ViewCompat.setAlpha(mainView,floatevaluator.evaluate(fraction,1.0f,0.3f));
         if(getBackground()!= null){
             int color = (int) ColorUtil.evaluateColor(fraction, Color.BLACK,Color.TRANSPARENT);
             getBackground().setColorFilter(color, PorterDuff.Mode.SRC_OVER);
@@ -198,7 +199,7 @@ public class Slidmenu extends FrameLayout {
          Open,Close
      }
     private SlidState mSlidState =SlidState.Close; //默认是关闭状态
-    private void open() {
+    public void open() {
         viewDragHelper.smoothSlideViewTo(mainView,dragrange,mainView.getTop());
         ViewCompat.postInvalidateOnAnimation(this);
     }
@@ -281,5 +282,9 @@ public class Slidmenu extends FrameLayout {
         void  onClose();
 
         void  onDraging();
+    }
+    //给外界提供一个slidemenu状态的方法
+    public SlidState getmSlidState(){
+        return  mSlidState;
     }
 }
