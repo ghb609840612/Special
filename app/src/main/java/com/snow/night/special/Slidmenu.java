@@ -113,9 +113,25 @@ public class Slidmenu extends FrameLayout {
 
             //根据mainview移动的距离 实现伴随动画
             float fraction = mainView.getLeft()*1f/dragrange;
-            Log.e("log",fraction+"");
             //根据滑动的百分比的值 执行伴随动画
               executeAnimation(fraction);
+
+            //执行状态更改的逻辑，和监听器方法的回调
+            if(mainView.getLeft()==dragrange&& mSlidState != SlidState.Open){
+              mSlidState = SlidState.Open;
+                if(listener!=null){
+                    listener.onOpen();
+                }
+            }
+            if(mainView.getLeft()==0&& mSlidState != SlidState.Close){
+                mSlidState = SlidState.Close;
+                if(listener!=null){
+                    listener.onClose();
+                }
+            }
+            if(listener!=null){
+                listener.onDraging();
+            }
         }
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
@@ -178,7 +194,10 @@ public class Slidmenu extends FrameLayout {
             getBackground().setColorFilter(color, PorterDuff.Mode.SRC_OVER);
         }
     }
-
+     public enum SlidState {
+         Open,Close
+     }
+    private SlidState mSlidState =SlidState.Close; //默认是关闭状态
     private void open() {
         viewDragHelper.smoothSlideViewTo(mainView,dragrange,mainView.getTop());
         ViewCompat.postInvalidateOnAnimation(this);
